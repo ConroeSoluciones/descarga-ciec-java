@@ -1,0 +1,152 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.csfacturacion.descarga</groupId>
+    <artifactId>descarga-ciec-java</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+    <description>
+        Provee una API cliente en java para el servicio de
+        descarga masiva de CFDI con CIEC
+    </description>
+    <name>descarga-ciec-java</name>
+    <url>https://www.csfacturacion.com</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <logging.version>2.0.13</logging.version>
+        <spotless.version>2.43.0</spotless.version>
+        <palantirJavaFormat.version>2.49.0</palantirJavaFormat.version>
+        <maven.compiler.source>21</maven.compiler.source>
+    </properties>
+
+    <developers>
+        <developer>
+            <name>Edgar Merino</name>
+            <email>donvodka@gmail.com</email>
+            <organization>NueveBit</organization>
+            <organizationUrl>http://www.nuevebit.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Gamboa Antonio</name>
+            <email>antonio.gamboa@csfacturacion.com</email>
+            <organization>CSFacturacion</organization>
+            <organizationUrl>https://www.csfacturacion.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <!--<scm>
+        <connection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</connection>
+        <developerConnection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</developerConnection>
+        <url>https://github.com/ConroeSoluciones/CSReporter-API-Java</url>
+    </scm>-->
+
+    <dependencies>
+
+        <!-- LOGGING -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-reload4j</artifactId>
+            <version>${logging.version}</version>
+        </dependency>
+
+
+        <!-- TESTING -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.11.0-M2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- HTTP -->
+
+        <!-- Utils -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.2.1-jre</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
+
+    </dependencies>
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+
+            <!-- Code style -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <!-- define a language-specific format -->
+                    <java>
+                        <!-- no need to specify files, inferred automatically, but you can if you want -->
+                        <!-- apply a specific flavor of palantir-java-format and reflow long strings -->
+                        <palantirJavaFormat>
+                            <!-- Optionally specify a version -->
+                            <version>${palantirJavaFormat.version}</version>
+                            <style>PALANTIR</style>
+                        </palantirJavaFormat>
+                        <removeUnusedImports>
+                            <!-- optional. Defaults to `google-java-format`. -->
+                            <engine>google-java-format</engine>
+                        </removeUnusedImports>
+                        <formatAnnotations />
+                        <cleanthat>
+                            <version>2.8</version>                          <!-- optional version of Cleanthat -->
+                            <sourceJdk>${maven.compiler.source}</sourceJdk> <!-- optional. Default to ${maven.compiler.source} else '1.7' -->
+                            <mutators>
+                                <mutator>SafeAndConsensual</mutator>          <!-- optional. Default to 'SafeAndConsensual' to include all mutators -->
+                            </mutators>
+                            <mutators>            <!-- List of mutators: https://github.com/solven-eu/cleanthat/blob/master/MUTATORS.generated.MD -->
+                                <mutator>LiteralsFirstInComparisons</mutator> <!-- You may alternatively list the requested mutators -->
+                            </mutators>
+                            <excludedMutators>
+                                <excludedMutator>OptionalNotEmpty</excludedMutator> <!-- You can discard specific rules -->
+                            </excludedMutators>
+                            <includeDraft>false</includeDraft>              <!-- optional. Default to false, not to include draft mutators from Composite mutators -->
+                        </cleanthat>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
