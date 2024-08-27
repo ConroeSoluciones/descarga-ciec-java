@@ -4,13 +4,13 @@
 
     <groupId>com.csfacturacion.descarga</groupId>
     <artifactId>descarga-ciec-java</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <description>
         Provee una API cliente en java para el servicio de
         descarga masiva de CFDI con CIEC
     </description>
-    <name>descarga-ciec-java</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <url>https://www.csfacturacion.com</url>
 
     <licenses>
@@ -43,11 +43,14 @@
         </developer>
     </developers>
 
-    <!--<scm>
-        <connection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</connection>
-        <developerConnection>scm:git:git@github.com:ConroeSoluciones/CSReporter-API-Java.git</developerConnection>
-        <url>https://github.com/ConroeSoluciones/CSReporter-API-Java</url>
-    </scm>-->
+
+
+    <scm>
+        <connection>scm:git:git://github.com/ConroeSoluciones/descarga-ciec-java.git</connection>
+        <url>https://github.com/ConroeSoluciones/descarga-ciec-java.git</url>
+        <developerConnection>scm:git:ssh://github.com/ConroeSoluciones/descarga-ciec-java.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencies>
 
@@ -89,16 +92,18 @@
 
 
     </dependencies>
+
     <build>
         <plugins>
 
+            <!-- Compiler , build -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
-                    <target>21</target>
+                    <target>${maven.compiler.source}</target>
                 </configuration>
             </plugin>
 
@@ -149,4 +154,77 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.4.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <tokenAuth>true</tokenAuth>
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.3</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadoc</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <stylesheet>java</stylesheet>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
