@@ -22,7 +22,7 @@ debe incluir la dependencia en el POM del proyecto donde se quiera utilizar.
     <dependency>
         <groupId>com.csfacturacion.descarga</groupId>
         <artifactId>descarga-ciec-java</artifactId>
-        <version>1.0</version>
+        <version>v1.0.0</version>
     </dependency>
 
 ## Build
