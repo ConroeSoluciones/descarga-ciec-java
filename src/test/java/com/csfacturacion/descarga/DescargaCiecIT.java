@@ -9,10 +9,7 @@ import com.csfacturacion.descarga.error.InvalidQueryException;
 import com.csfacturacion.descarga.error.QueryNotReadyYet;
 import com.csfacturacion.descarga.error.XmlNotFoundException;
 import com.csfacturacion.descarga.error.ZipException;
-import com.csfacturacion.descarga.model.CfdiMeta;
-import com.csfacturacion.descarga.model.Credenciales;
-import com.csfacturacion.descarga.model.Parametros;
-import com.csfacturacion.descarga.model.Progress;
+import com.csfacturacion.descarga.model.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -26,7 +23,6 @@ import java.util.Objects;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -37,10 +33,6 @@ public class DescargaCiecIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(DescargaCiecIT.class);
 
     private static DescargaCiecImpl descargaCiec;
-
-    private static Credenciales csCredenciales;
-
-    private static Credenciales satCredenciales;
 
     private static UUID consultaFolio;
 
@@ -64,9 +56,13 @@ public class DescargaCiecIT {
     public static void globalSetup() throws Exception {
         Gson gson = new GsonBuilder().create();
 
-        csCredenciales = gson.fromJson(getResourceAsString("csCredenciales.json"), Credenciales.class);
+        Credenciales csCredenciales = gson.fromJson(
+            getResourceAsString("csCredenciales.json"),
+            Credenciales.class);
 
-        satCredenciales = gson.fromJson(getResourceAsString("satCredenciales.json"), Credenciales.class);
+        Credenciales satCredenciales = gson.fromJson(
+            getResourceAsString("satCredenciales.json"),
+            Credenciales.class);
 
         descargaCiec = new DescargaCiecImpl(csCredenciales);
 
@@ -146,7 +142,7 @@ public class DescargaCiecIT {
     }
 
     @Test
-    public void buscarConsultaInexistente() throws InvalidQueryException {
+    public void buscarConsultaInexistente() {
         // a menos que exista el random UUID, debe lanzar excepción
         assertThrows(InvalidQueryException.class, () -> descargaCiec.search(UUID.randomUUID()));
     }
@@ -191,9 +187,15 @@ public class DescargaCiecIT {
     }
 
     @Test
-    @Disabled
-    public void getCFDIDirecto() {
-        throw new UnsupportedOperationException();
+    public void getCFDIDirecto() throws InvalidQueryException {
+        descargaCiec.search(consultaFolio, new ConsultaTerminadaListener() {
+
+            @Override
+            public void onTerminada(QueryRetriever consulta) {
+                CfdiMeta meta = consulta.getCfdi(cfdiFolio);
+                assertNotNull(meta);
+            }
+        });
     }
 
     @Test
@@ -239,7 +241,7 @@ public class DescargaCiecIT {
     }
 
     @AfterAll
-    public static void globalClose() throws IOException {
+    public static void globalClose() {
         descargaCiec.close();
     }
 
