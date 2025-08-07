@@ -140,8 +140,11 @@ public class QueryRetrieverImpl implements QueryRetriever {
     }
 
     protected void validarResultadosSuficientes(int page) throws QueryNotReadyYet {
+        if (page <= 0) {
+            throw new IllegalArgumentException("page must be a positive integer");
+        }
         if (!hasResults() || page > getSummary().total()) {
-            throw new NotEnoughResultsException("No existen suficientes " + "resultados para mostrar, total páginas: "
+            throw new NotEnoughResultsException("No existen suficientes resultados para mostrar, total páginas: "
                     + getSummary().pages());
         }
     }

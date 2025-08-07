@@ -200,7 +200,6 @@ public class DescargaCiecIT {
             @Override
             public void onTerminada(QueryRetriever consulta) {
                 try {
-                    System.out.println(consulta.getParameters());
                     String xml = consulta.getXml(cfdiFolio);
                     assertEquals(cfdiXml, xml.trim());
                     assertNotNull(xml);
