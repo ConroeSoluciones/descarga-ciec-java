@@ -33,7 +33,7 @@ public class DescargaCiecImpl implements CloseableDescargaCiec {
 
     private Credenciales csCredenciales;
 
-    private final int statusCheckTimeout = 15000; // ms
+    private final int statusCheckTimeout = 1000; // ms
 
     private final StatusChecker statusChecker;
 
@@ -42,6 +42,8 @@ public class DescargaCiecImpl implements CloseableDescargaCiec {
     private final ScheduledFuture<?> statusCheckerHandle;
 
     private final RequestFactory requestFactory;
+
+    private final ScheduledExecutorService scheduler;
 
     private DescargaCiecImpl() {
         this(new RequestFactory(), DEFAULT_TIMEOUT * 1000);
@@ -75,9 +77,12 @@ public class DescargaCiecImpl implements CloseableDescargaCiec {
         this.statusChecker = new StatusChecker();
         this.apiClient = apiClient;
 
-        try (ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor()) {
-            statusCheckerHandle = scheduler.scheduleAtFixedRate(statusChecker, timeout, timeout, TimeUnit.MILLISECONDS);
-        }
+        this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        statusCheckerHandle = scheduler.scheduleAtFixedRate(
+            statusChecker,
+            timeout,
+            timeout,
+            TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -109,11 +114,12 @@ public class DescargaCiecImpl implements CloseableDescargaCiec {
             JsonObject payload = JsonParser.parseString(response.body()).getAsJsonObject();
 
             if (payload.has("error")) {
-                LOGGER.error("Error al crear consulta " + payload.get("error").getAsString());
+                JsonObject error = payload.get("error").getAsJsonObject();
+                LOGGER.error("Error al crear consulta: {}", error.get("message").getAsString());
                 throw new InvalidQueryException("Ocurrió un error al "
                         + "comunicarse con el servidor de descarga masiva."
                         + "mensaje de la solicitud: "
-                        + payload.get("error").getAsString());
+                        + error.get("message").getAsString());
             }
 
             String folio = payload.get("data").getAsJsonObject().get("uuid").getAsString();
@@ -200,6 +206,7 @@ public class DescargaCiecImpl implements CloseableDescargaCiec {
     public void close() {
         statusCheckerHandle.cancel(false);
         apiClient.close();
+        scheduler.shutdownNow();
     }
 
     public int getStatusCheckTimeout() {
@@ -283,7 +290,7 @@ public class DescargaCiecImpl implements CloseableDescargaCiec {
                         // causa que el Thread actual termine
                         // TODO: Se necesita una excepción más específica,
                         // y probablemente verificada
-                        LOGGER.error("Hubo un problema al intentar conectarse " + "al servidor de cfdis descarga", e);
+                        LOGGER.error("Hubo un problema al intentar conectarse al servidor de cfdis descarga", e);
 
                         // también da por terminada la consulta
                         // TODO: Notificar

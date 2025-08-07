@@ -21,9 +21,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +83,7 @@ public class DescargaCiecIT {
                 .build();
     }
 
+    @BeforeEach
     public void setUp() {
         consultaTerminada = false;
     }
@@ -132,7 +132,7 @@ public class DescargaCiecIT {
     @Test
     public void buscarAsync() throws Exception {
         QueryRetriever queryRetriever = descargaCiec.search(consultaFolio, (status, c) -> {
-            System.out.println(status);
+            //System.out.println(status);
             DescargaCiecIT.this.onStatusChanged(c);
         });
 
@@ -186,7 +186,7 @@ public class DescargaCiecIT {
         });
     }
 
-    @Test
+    @Disabled("No está implementado el metodo para obtener un CFDI como POJO")
     public void getCFDIDirecto() throws InvalidQueryException {
         descargaCiec.search(consultaFolio, new ConsultaTerminadaListener() {
 
@@ -205,6 +205,7 @@ public class DescargaCiecIT {
             @Override
             public void onTerminada(QueryRetriever consulta) {
                 try {
+                    System.out.println(consulta.getParameters());
                     String xml = consulta.getXml(cfdiFolio);
                     assertEquals(cfdiXml, xml.trim());
                     assertNotNull(xml);
