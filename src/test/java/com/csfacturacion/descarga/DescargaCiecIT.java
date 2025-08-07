@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
@@ -55,13 +54,9 @@ public class DescargaCiecIT {
     public static void globalSetup() throws Exception {
         Gson gson = new GsonBuilder().create();
 
-        Credenciales csCredenciales = gson.fromJson(
-            getResourceAsString("csCredenciales.json"),
-            Credenciales.class);
+        Credenciales csCredenciales = gson.fromJson(getResourceAsString("csCredenciales.json"), Credenciales.class);
 
-        Credenciales satCredenciales = gson.fromJson(
-            getResourceAsString("satCredenciales.json"),
-            Credenciales.class);
+        Credenciales satCredenciales = gson.fromJson(getResourceAsString("satCredenciales.json"), Credenciales.class);
 
         descargaCiec = new DescargaCiecImpl(csCredenciales);
 
@@ -132,7 +127,7 @@ public class DescargaCiecIT {
     @Test
     public void buscarAsync() throws Exception {
         QueryRetriever queryRetriever = descargaCiec.search(consultaFolio, (status, c) -> {
-            //System.out.println(status);
+            // System.out.println(status);
             DescargaCiecIT.this.onStatusChanged(c);
         });
 

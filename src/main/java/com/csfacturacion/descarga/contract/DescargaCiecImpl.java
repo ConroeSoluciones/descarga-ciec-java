@@ -78,11 +78,7 @@ public class DescargaCiecImpl implements CloseableDescargaCiec {
         this.apiClient = apiClient;
 
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
-        statusCheckerHandle = scheduler.scheduleAtFixedRate(
-            statusChecker,
-            timeout,
-            timeout,
-            TimeUnit.MILLISECONDS);
+        statusCheckerHandle = scheduler.scheduleAtFixedRate(statusChecker, timeout, timeout, TimeUnit.MILLISECONDS);
     }
 
     /**
